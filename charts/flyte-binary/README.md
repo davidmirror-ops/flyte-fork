@@ -42,7 +42,7 @@ Chart for basic single Flyte executable deployment
 | configuration.auth.oidc.clientId | string | `""` |  |
 | configuration.auth.oidc.clientSecret | string | `""` |  |
 | configuration.co-pilot.image.repository | string | `"cr.flyte.org/flyteorg/flytecopilot"` |  |
-| configuration.co-pilot.image.tag | string | `"v1.12.1-rc0"` |  |
+| configuration.co-pilot.image.tag | string | `"v1.13.0"` |  |
 | configuration.database.dbname | string | `"flyte"` |  |
 | configuration.database.host | string | `"127.0.0.1"` |  |
 | configuration.database.options | string | `"sslmode=disable"` |  |
@@ -104,6 +104,8 @@ Chart for basic single Flyte executable deployment
 | deployment.podSecurityContext.runAsGroup | int | `65534` |  |
 | deployment.podSecurityContext.runAsUser | int | `65534` |  |
 | deployment.readinessProbe | object | `{}` |  |
+| deployment.resources.requests.cpu | string | `"4"` |  |
+| deployment.resources.requests.memory | string | `"4Gi"` |  |
 | deployment.sidecars | list | `[]` |  |
 | deployment.startupProbe | object | `{}` |  |
 | deployment.waitForDB.args | list | `[]` |  |

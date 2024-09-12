@@ -159,7 +159,7 @@ configuration:
       # repository CoPilot sidecar image repository
       repository: cr.flyte.org/flyteorg/flytecopilot  # FLYTECOPILOT_IMAGE
       # tag CoPilot sidecar image tag
-      tag: v1.12.1-rc0  # FLYTECOPILOT_TAG
+      tag: v1.13.0  # FLYTECOPILOT_TAG
   # agentService Flyte Agent configuration
   agentService:
     defaultAgent:
@@ -234,12 +234,10 @@ deployment:
   # lifecycleHooks Specify hooks to run in Flyte container before or after startup
   lifecycleHooks: {}
   # resources Resource limits and requests for Flyte container
-  # Uncomment and update to specify resources for deployment
-  # resources:
-  #   limits:
-  #     memory: 1Gi
-  #   requests:
-  #     cpu: 1
+  resources:
+    requests:
+      cpu: "4"
+      memory: "4Gi"
   # podSecurityContext Specify security context for Flyte pod
   # See: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
   podSecurityContext:

@@ -2155,6 +2155,10 @@ pub struct TaskLog {
     pub message_format: i32,
     #[prost(message, optional, tag="4")]
     pub ttl: ::core::option::Option<::prost_types::Duration>,
+    #[prost(bool, tag="5")]
+    pub show_while_pending: bool,
+    #[prost(bool, tag="6")]
+    pub hide_once_finished: bool,
 }
 /// Nested message and enum types in `TaskLog`.
 pub mod task_log {
@@ -2397,6 +2401,9 @@ pub struct ArrayNode {
     /// node is the sub-node that will be executed for each element in the array.
     #[prost(message, optional, boxed, tag="1")]
     pub node: ::core::option::Option<::prost::alloc::boxed::Box<Node>>,
+    /// execution_mode determines the execution path for ArrayNode.
+    #[prost(enumeration="array_node::ExecutionMode", tag="5")]
+    pub execution_mode: i32,
     #[prost(oneof="array_node::ParallelismOption", tags="2")]
     pub parallelism_option: ::core::option::Option<array_node::ParallelismOption>,
     #[prost(oneof="array_node::SuccessCriteria", tags="3, 4")]
@@ -2404,6 +2411,36 @@ pub struct ArrayNode {
 }
 /// Nested message and enum types in `ArrayNode`.
 pub mod array_node {
+    #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+    #[repr(i32)]
+    pub enum ExecutionMode {
+        /// Indicates the ArrayNode will store minimal state for the sub-nodes.
+        /// This is more efficient, but only supports a subset of Flyte entities.
+        MinimalState = 0,
+        /// Indicates the ArrayNode will store full state for the sub-nodes.
+        /// This supports a wider range of Flyte entities.
+        FullState = 1,
+    }
+    impl ExecutionMode {
+        /// String value of the enum field names used in the ProtoBuf definition.
+        ///
+        /// The values are not transformed in any way and thus are considered stable
+        /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+        pub fn as_str_name(&self) -> &'static str {
+            match self {
+                ExecutionMode::MinimalState => "MINIMAL_STATE",
+                ExecutionMode::FullState => "FULL_STATE",
+            }
+        }
+        /// Creates an enum from field names used in the ProtoBuf definition.
+        pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+            match value {
+                "MINIMAL_STATE" => Some(Self::MinimalState),
+                "FULL_STATE" => Some(Self::FullState),
+                _ => None,
+            }
+        }
+    }
     #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum ParallelismOption {
@@ -2961,12 +2998,18 @@ pub struct ExecutionEnvAssignment {
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ExecutionEnv {
-    /// id is a unique identifier for the execution environment.
+    /// name is a human-readable identifier for the execution environment. This is combined with the
+    /// project, domain, and version to uniquely identify an execution environment.
     #[prost(string, tag="1")]
-    pub id: ::prost::alloc::string::String,
+    pub name: ::prost::alloc::string::String,
     /// type is the type of the execution environment.
     #[prost(string, tag="2")]
     pub r#type: ::prost::alloc::string::String,
+    /// version is the version of the execution environment. This may be used differently by each
+    /// individual environment type (ex. auto-generated or manually provided), but is intended to
+    /// allow variance in environment specifications with the same ID.
+    #[prost(string, tag="5")]
+    pub version: ::prost::alloc::string::String,
     /// environment is a oneof field that can be used to specify the environment in different ways.
     #[prost(oneof="execution_env::Environment", tags="3, 4")]
     pub environment: ::core::option::Option<execution_env::Environment>,

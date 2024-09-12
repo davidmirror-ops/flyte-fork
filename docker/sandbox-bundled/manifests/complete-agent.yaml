@@ -125,6 +125,7 @@ rules:
   - namespaces
   - resourcequotas
   - secrets
+  - serviceaccounts
   verbs:
   - create
   - get
@@ -468,7 +469,7 @@ data:
         stackdriver-enabled: false
       k8s:
         co-pilot:
-          image: "cr.flyte.org/flyteorg/flytecopilot:v1.12.1-rc0"
+          image: "cr.flyte.org/flyteorg/flytecopilot:v1.13.0"
       k8s-array:
         logs:
           config:
@@ -816,7 +817,7 @@ type: Opaque
 ---
 apiVersion: v1
 data:
-  haSharedSecret: eHMzc0p4bTZoSVVFb1V0Uw==
+  haSharedSecret: Nmszb2dnV0lvdDV4cTFKRw==
   proxyPassword: ""
   proxyUsername: ""
 kind: Secret
@@ -1133,7 +1134,8 @@ metadata:
   namespace: flyte
 spec:
   ports:
-  - name: agent-grpc
+  - appProtocol: TCP
+    name: agent-grpc
     port: 8000
     protocol: TCP
     targetPort: agent-grpc
@@ -1246,7 +1248,7 @@ spec:
     metadata:
       annotations:
         checksum/cluster-resource-templates: 6fd9b172465e3089fcc59f738b92b8dc4d8939360c19de8ee65f68b0e7422035
-        checksum/configuration: 4ec8f20f526b359ef8be6c10658d504fa51856abbee25b3d854d4ea20e8f5472
+        checksum/configuration: 35a84a5044b9c9ffb7963f8ea11733277e84450e2124593216c6721ef7a4d539
         checksum/configuration-secret: 09216ffaa3d29e14f88b1f30af580d02a2a5e014de4d750b7f275cc07ed4e914
       labels:
         app.kubernetes.io/component: flyte-binary
@@ -1287,6 +1289,10 @@ spec:
             path: /healthcheck
             port: http
           initialDelaySeconds: 30
+        resources:
+          requests:
+            cpu: "4"
+            memory: 4Gi
         volumeMounts:
         - mountPath: /etc/flyte/cluster-resource-templates
           name: cluster-resource-templates
@@ -1311,6 +1317,10 @@ spec:
         image: bitnami/postgresql:sandbox
         imagePullPolicy: Never
         name: wait-for-db
+        resources:
+          requests:
+            cpu: "4"
+            memory: 4Gi
       serviceAccountName: flyte-sandbox
       volumes:
       - name: cluster-resource-templates
@@ -1412,7 +1422,7 @@ spec:
     metadata:
       annotations:
         checksum/config: 8f50e768255a87f078ba8b9879a0c174c3e045ffb46ac8723d2eedbe293c8d81
-        checksum/secret: 174761d8b2609550a723b808cf0807c0b29cd4d3e1050ee85178a46fbca1a61c
+        checksum/secret: e61f7c68a179663c34a4ed4be490c02741a0ee38ef152e5651859418cb4b36bd
       labels:
         app: docker-registry
         release: flyte-sandbox
@@ -1755,7 +1765,7 @@ spec:
           value: minio
         - name: FLYTE_AWS_SECRET_ACCESS_KEY
           value: miniostorage
-        image: ghcr.io/flyteorg/flyteagent:1.12.1-rc0
+        image: cr.flyte.org/flyteorg/flyteagent:1.13.0
         imagePullPolicy: IfNotPresent
         name: flyteagent
         ports:
@@ -1770,7 +1780,7 @@ spec:
           limits:
             cpu: 500m
             ephemeral-storage: 200Mi
-            memory: 200Mi
+            memory: 300Mi
           requests:
             cpu: 500m
             ephemeral-storage: 200Mi
