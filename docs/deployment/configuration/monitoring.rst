@@ -91,8 +91,13 @@ Both ``flyteadmin`` and ``flytepropeller`` are instrumented to expose metrics. T
   The user-facing dashboard is published under ID `13980 <https://grafana.com/grafana/dashboards/13980>`__ in the Grafana marketplace.
 
 - **System Dashboards**: Dashboards that are useful for the system maintainer to investigate the status and performance of their Flyte deployments. These are further divided into:
+<<<<<<< HEAD
         - `DataPlane/FlytePropeller <https://grafana.com/grafana/dashboards/13979>`__: execution engine status and performance.
         - `ControlPlane/Flyteadmin <https://grafana.com/grafana/dashboards/13981>`__: API-level monitoring.
+=======
+        - Data plane (``flytepropeller``) - `21719 <https://grafana.com/grafana/dashboards/21719-flyte-propeller-dashboard-via-prometheus/>`__: execution engine status and performance.
+        - Control plane (``flyteadmin``) - `21720 <https://grafana.com/grafana/dashboards/21720-flyteadmin-dashboard-via-prometheus/>`__: API-level monitoring.
+>>>>>>> 94a1d95a2 (Ammend previous PR)
 
 The corresponding JSON files for each dashboard are also located at ``deployment/stats/prometheus``.
 
@@ -121,7 +126,11 @@ This is especially true if you plan to use the Service Monitors provided by the 
 
 3. Once you have installed and configured the Prometheus operator, enable the Service Monitors in the Helm chart by configuring the following keys in your ``values`` file:
 
+<<<<<<< HEAD
 .. code-block:: yaml
+=======
+      The above configuration enables the ``serviceMonitor`` that Prometheus can then use to automatically discover services and scrape metrics from them.
+>>>>>>> 94a1d95a2 (Ammend previous PR)
 
    flyteadmin:
      serviceMonitor:
@@ -131,6 +140,31 @@ This is especially true if you plan to use the Service Monitors provided by the 
      serviceMonitor:
        enabled: true
 
+<<<<<<< HEAD
+=======
+      Save the following in a ``flyte-monitoring-overrides.yaml`` file and run a ``helm upgrade`` operation pointing to that ``--values`` file:
+
+      .. code-block:: yaml
+
+         configuration:
+           inline:
+             propeller:
+               prof-port: 10254
+               metrics-prefix: "flyte:"
+             scheduler:
+               profilerPort: 10254
+               metricsScope: "flyte:"
+             flyteadmin:
+               profilerPort: 10254
+         service:
+           extraPorts:
+           - name: http-metrics
+             protocol: TCP
+             port: 10254
+
+      The above configuration enables the ``serviceMonitor`` that Prometheus can then use to automatically discover services and scrape metrics from them.
+       
+>>>>>>> 94a1d95a2 (Ammend previous PR)
 .. note::
 
    By default, the ``ServiceMonitor`` is configured with a ``scrapeTimeout`` of 30s and ``interval`` of 60s. You can customize these values if needed.
